@@ -13,6 +13,13 @@ function Step1SetUp({ onStart }) {
   const [role, setRole] = useState("");
   const [experience, setExperience] = useState("");
   const [mode, setMode] = useState("Technical");
+  const [resumeFile, setResumeFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [resumeText, setResumeText] = useState("");
+  const [analysisDone, setAnalysisDone] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -98,8 +105,62 @@ function Step1SetUp({ onStart }) {
                 className='w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition'
                 onChange={(e) => setExperience(e.target.value)} value={experience}
               />
+
             </div>
+
+            <select value={mode}
+              onChange={(e) => setMode(e.target.value)}
+              className='w-full py-3 px-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition'>
+
+              <option value="Technical">Technical Interview</option>
+              <option value="HR">HR Interview</option>
+            </select>
+
+            {!analysisDone && (
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                onClick={() => document.getElementById("resumeUpload").click()}
+                className='border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-green-500 hover:bg-green-50 transition'
+              >
+                <FaFileUpload className='text-4xl mx-auto text-green-600 mb-3' />
+
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  id="resumeUpload"
+                  className="hidden"
+                  onChange={(e) => setResumeFile(e.target.files[0])}
+                />
+
+                <p className='text-gray-600 font-medium'>
+                  {resumeFile ? resumeFile.name : "Click to upload resume (Optional)"}
+                </p>
+
+                {resumeFile && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    className='mt-4 bg-gray-900 text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition'
+                  >
+                    {analyzing ? "Analyzing..." : "Analyze Resume"}
+                  </motion.button>
+                )}
+
+
+              </motion.div>
+            )}
+
+            <motion.button
+              disabled={!role || !experience}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.95 }}
+              className='w-full disabled:bg-gray-600 bg-green-600 hover:bg-green-700 text-white py-3 rounded-full text-lg font-semibold transition duration-300 shadow-md'
+            >
+              Start Interview
+            </motion.button>
+
           </div>
+
+
 
         </motion.div>
       </div>
