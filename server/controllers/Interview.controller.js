@@ -1,11 +1,11 @@
 import fs from 'fs';
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { askAi } from "../services/openRouter.service.js";
 
-export const ansylzeResume = async(req,res) =>{
+export const analyzeResume = async (req, res) => {
     try {
-        if(!req.file){
-            return res.status(400).json({message:"Resume required"});
+        if (!req.file) {
+            return res.status(400).json({ message: "Resume required" });
         }
 
         const filepath = req.file.path
@@ -13,24 +13,24 @@ export const ansylzeResume = async(req,res) =>{
         const fileBuffer = await fs.promises.readFile(filepath)
         const unit8Array = new Uint8Array(fileBuffer);
 
-        const pdf = await pdfjsLib.getDocument({data:unit8Array}).promise;
-        
+        const pdf = await pdfjsLib.getDocument({ data: unit8Array }).promise;
+
         let resumeText = "";
 
         //Extract text from all pages
-        for(let pageNum = 1;pageNum <= pdf.numPages;pageNum++){
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
             const page = await pdf.getPage(pageNum);
             const content = await page.getTextContent();
             const pageText = content.items.map(item => item.str).join(" ");
-            resumeText += pageText + "\n";           
+            resumeText += pageText + "\n";
         }
 
-        resumeText += resumeText.replace(/\s+/g," ").trim();
+        resumeText = resumeText.replace(/\s+/g, " ").trim();
 
         const messages = [
             {
-              role: "system",
-              content: `
+                role: "system",
+                content: `
           Extract structured data from resume.
           
           Return strictly JSON:
@@ -44,32 +44,42 @@ export const ansylzeResume = async(req,res) =>{
               `,
             },
             {
-              role: "user",
-              content: resumeText,
+                role: "user",
+                content: resumeText,
             },
-          ];
+        ];
 
-          const aiResponse = await askAi(messages);
+        const aiResponse = await askAi(messages);
 
-          const parsed = JSON.parse(aiResponse);
+        console.log("AI Response:");
+        console.log(aiResponse);
 
-          fs.unlinkSync(filepath);
+        const cleaned = aiResponse
+            .replace(/```json\s*/i, "")
+            .replace(/```/g, "")
+            .trim();
 
-          res.json({
+        const parsed = JSON.parse(cleaned);
+
+        fs.unlinkSync(filepath);
+
+        res.json({
             role: parsed.role,
             experience: parsed.experience,
             projects: parsed.projects,
-            skills: parsed.skills
+            skills: parsed.skills,
             resumeText
-          })
-    
+        })
+
     } catch (error) {
         console.error(error);
 
-        if(req.file && fs.existsSync(req.file.path)){
+        if (req.file && fs.existsSync(req.file.path)) {
             fs.unlinkSync(req.file.path);
-
-        return res.status(500).json({message:error.message});
         }
+
+        return res.status(500).json({
+            message: error.message
+        });
     }
-}
+};
