@@ -216,3 +216,16 @@ export const generateQuestion = async (req, res) => {
         return res.status(500).json({message: error});
     }
 }
+
+export const submitAnswer = async (req,res)=> {
+    try {
+        const { interviewId, questionId, answer, timeTaken } = req.body;
+
+        const interview = await Interview.findById(interviewId);
+        const quest
+
+
+    } catch (error) {
+        
+    }
+}
