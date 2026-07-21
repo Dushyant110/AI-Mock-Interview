@@ -12,6 +12,8 @@ import { ServerUrl } from '../App';
 
 function Step1SetUp({ onStart }) {
 
+  const {userData} = useSelector((state)=>state.user);
+  const dispatch = useDispatch();
   const [role, setRole] = useState("");
   const [experience, setExperience] = useState("");
   const [mode, setMode] = useState("Technical");
@@ -51,6 +53,23 @@ function Step1SetUp({ onStart }) {
       console.error(error);
     }
   }
+
+  const handleStart = async () =>{
+    setLoading(true);
+    try {
+        const result = await axios.post(ServerUrl + "/api.interview/generate-questions",{role,experience,mode,resumeText,projects,skills},{withCredentials:true});
+        if(userData){
+          dispatch(setUserData(...userData,credits:result.data.creditsLeft))
+        }
+        setLoading(false);
+        onStart(result.data);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  }
+
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -200,6 +219,7 @@ function Step1SetUp({ onStart }) {
                           {projects.map((p, i) => (
                             <li key={i}>{p}</li>
                           ))}
+             
                         </ul>
                       </div>
                     )}
@@ -222,7 +242,7 @@ function Step1SetUp({ onStart }) {
                         </div>
                       </div>
                     )}
-                    
+
                   </motion.div>
                 )}
 
