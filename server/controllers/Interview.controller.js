@@ -386,6 +386,6 @@ export const finishInterview = async (req, res) => {
             })),
         });
     } catch (error) {
-        return res.status(500).json({ message: `failed to submit answer ${error}` });
+        return res.status(500).json({  message: `failed to submit answer ${error}` });
     }
 }
