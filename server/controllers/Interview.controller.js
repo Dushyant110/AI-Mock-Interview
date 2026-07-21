@@ -213,7 +213,7 @@ export const generateQuestion = async (req, res) => {
 
 
     } catch (error) {
-        return res.status(500).json({ message:`failed to create ${error}` });
+        return res.status(500).json({ message: `failed to create ${error}` });
     }
 }
 
@@ -316,10 +316,76 @@ export const submitAnswer = async (req, res) => {
 
         await interview.save();
 
-        return res.status(200).json({feedback: parsed.feedback})
+        return res.status(200).json({ feedback: parsed.feedback })
 
 
     } catch (error) {
-        return res.status(500).json({ message:`failed to submit answer ${error}` });
+        return res.status(500).json({ message: `failed to submit answer ${error}` });
+    }
+}
+
+
+export const finishInterview = async (req, res) => {
+    try {
+        const { interviewId } = req.body;
+
+        const interview = await Interview.findById(interviewId);
+
+        if (!interview) {
+            return res.status(400).json({ message: "failed to find Interview" });
+        }
+
+        const totalQuestions = interview.questions.length;
+
+        let totalScore = 0;
+        let totalConfidence = 0;
+        let totalCommunication = 0;
+        let totalCorrectness = 0;
+
+        interview.questions.forEach((q) => {
+            totalScore += q.score || 0;
+            totalConfidence += q.confidence || 0;
+            totalCommunication += q.communication || 0;
+            totalCorrectness += q.correctness || 0;
+        });
+
+        const finalScore = totalQuestions
+            ? totalScore / totalQuestions
+            : 0;
+
+        const avgConfidence = totalQuestions
+            ? totalConfidence / totalQuestions
+            : 0;
+
+        const avgCommunication = totalQuestions
+            ? totalCommunication / totalQuestions
+            : 0;
+
+        const avgCorrectness = totalQuestions
+            ? totalCorrectness / totalQuestions
+            : 0;
+
+        interview.finalScore = finalScore;
+        interview.status = "completed";
+
+        await interview.save();
+
+
+        return res.status(200).json({
+            finalScore: Number(finalScore.toFixed(1)),
+            confidence: Number(avgConfidence.toFixed(1)),
+            communication: Number(avgCommunication.toFixed(1)),
+            correctness: Number(avgCorrectness.toFixed(1)),
+            questionWiseScore: interview.questions.map((q) => ({
+                question: q.question,
+                score: q.score || 0,
+                feedback: q.feedback || "",
+                confidence: q.confidence || 0,
+                communication: q.communication || 0,
+                correctness: q.correctness || 0,
+            })),
+        });
+    } catch (error) {
+        return res.status(500).json({ message: `failed to submit answer ${error}` });
     }
 }
