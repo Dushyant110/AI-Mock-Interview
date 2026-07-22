@@ -148,8 +148,8 @@ export const generateQuestion = async (req, res) => {
 
         const messages = [
             {
-                role: "system",
-                content: `
+              role: "system",
+              content: `
           You are a real human interviewer conducting a professional interview.
           
           Speak in simple, natural English as if you are directly talking to the candidate.
@@ -159,28 +159,23 @@ export const generateQuestion = async (req, res) => {
           Strict Rules:
           - Each question must contain between 15 and 25 words.
           - Each question must be a single complete sentence.
-          - Do NOT number them.
-          - Do NOT add explanations.
-          - Do NOT add extra text before or after.
-          - One question per line only.
-          - Keep language simple and conversational.
-          - Questions must feel practical and realistic.
+          - Questions should be relevant to the candidate's role, experience, skills, projects and resume.
+          - Do not number the questions.
+          - Return ONLY a valid JSON array of strings.
+          - Do not add markdown or explanations.
           
-          Difficulty progression:
-          Question 1 → easy
-          Question 2 → easy
-          Question 3 → medium
-          Question 4 → medium
-          Question 5 → hard
-          
-          Make questions based on the candidate's role, experience, interviewMode, projects, skills, and resume details.
-          `
+          Example:
+          [
+            "Can you explain a challenging project you worked on and the decisions you made during its development?",
+            "How would you optimize the performance of a React application handling thousands of users simultaneously?"
+          ]
+              `,
             },
             {
-                role: "user",
-                content: userPrompt
-            }
-        ];
+              role: "user",
+              content: userPrompt,
+            },
+          ];
 
         const aiResponse = await askAi(messages);
 

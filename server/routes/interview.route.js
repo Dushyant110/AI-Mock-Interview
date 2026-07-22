@@ -1,12 +1,13 @@
 import express from "express";
 import isAuth from "../middlewares/isAuth.js";
 import { upload } from "../middlewares/multer.js";
+
 import {
-  analyzeResume,
-  finishInterview,
-  generateQuestion,
-  submitAnswer,
-} from "../controllers/interview.controller.js";
+    analyzeResume,
+    finishInterview,
+    generateQuestion,
+    submitAnswer,
+  } from "../controllers/interview.controller.js";
 
 const interviewRouter = express.Router();
 
