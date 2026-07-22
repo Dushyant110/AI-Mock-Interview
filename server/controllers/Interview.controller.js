@@ -88,17 +88,28 @@ export const analyzeResume = async (req, res) => {
 
 export const generateQuestion = async (req, res) => {
     try {
-        const { role, experience, mode, resumeText, projects, skills } = req.body;
+        let { role, experience, mode, resumeText, projects, skills } = req.body;
 
-        role?.trim()
-        experience = experience?.trim()
-        mode = mode?.trim()
+        role = role?.trim();
+        experience = experience?.trim();
+        mode = mode?.trim();
 
-        if (!role || !experience || !mode {
-            return res.status(400).json({ message: "Role, Experience ans Mode are reqi=uired" })
+        console.log({
+            role,
+            experience,
+            mode,
+            resumeText,
+            projects,
+            skills,
+        });
+
+        if (!role || !experience || !mode) {
+            return res.status(400).json({
+                message: "Role, Experience and Mode are required",
+            });
         }
 
-        const user = await User.findById(userId)
+        const user = await User.findById(req.userId);
 
         if (!user) {
             return res.status(404).json({ message: "User not found" })
@@ -179,7 +190,11 @@ export const generateQuestion = async (req, res) => {
             });
         }
 
-        const questionsArray = airResponse.split("\n").map(q => q.trim()).filter(q => q.length > 0).slice(0, 5);
+        const questionsArray = aiResponse
+            .split("\n")
+            .map(q => q.trim())
+            .filter(q => q.length > 0)
+            .slice(0, 5);
 
         if (questionsArray.length == 0) {
             return res.status(500).json({
@@ -386,6 +401,6 @@ export const finishInterview = async (req, res) => {
             })),
         });
     } catch (error) {
-        return res.status(500).json({  message: `failed to finish interview  ${error}` });
+        return res.status(500).json({ message: `failed to finish interview  ${error}` });
     }
 }
