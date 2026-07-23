@@ -6,7 +6,7 @@ import { motion } from 'motion/react'
 import { FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa'
 import axios from "axios";
 import { ServerUrl } from "../App";
-import { BsArrowLeft } from 'react-icons/bs'
+import { BsArrowRight } from 'react-icons/bs'
 
 
 function Step2Interview({ interviewData, onFinish }) {
@@ -277,7 +277,43 @@ function Step2Interview({ interviewData, onFinish }) {
   };
 
 
-  
+  const finishInterview = async () => {
+    stopMic();
+    setIsMicOn(false);
+
+    try {
+      const result = await axios.post(
+        ServerUrl + "/api/interview/finish",
+        { interviewId },
+        { withCredentials: true }
+      );
+
+      console.log(result.data);
+      onFinish(result.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (isIntroPhase) return;
+    if (!currentQuestion) return;
+
+    if (timeLeft === 0 && !isSubmitting && !feedback) {
+      handleSubmit();
+    }
+  }, [timeLeft]);
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+        recognitionRef.current.abort();
+      }
+
+      window.speechSynthesis.cancel();
+    };
+  }, []);
 
 
   return (
@@ -400,7 +436,7 @@ function Step2Interview({ interviewData, onFinish }) {
                 onClick={handleNext}
                 className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 text-white py-3 rounded-xl shadow-md hover:opacity-90 transition flex items-center justify-center gap-1"
               >
-                Next Question <BsArrowLeft size={18} />
+                Next Question <BsArrowRight size={18} />
               </button>
             </motion.div>
           )}
