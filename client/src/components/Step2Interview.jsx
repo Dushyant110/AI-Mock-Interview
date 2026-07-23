@@ -72,7 +72,7 @@ function Step2Interview({ interviewData, onFinish }) {
 
 }, []);
 
-
+  const videoSource = voiceGender == "male" ? maleVideo : femaleVideo
 
   return (
     <div className='min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-100 flex items-center justify-center p-4 sm:p-6'>
