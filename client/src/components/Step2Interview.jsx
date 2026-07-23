@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState, useEffect, useRef } from "react";
 import maleVideo from "../assets/Videos/male-ai.mp4"
 import femaleVideo from "../assets/Videos/female-ai.mp4"
 import Timer from './Timer'
