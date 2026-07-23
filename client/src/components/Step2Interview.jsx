@@ -174,6 +174,48 @@ function Step2Interview({ interviewData, onFinish }) {
   },[isIntroPhase, currentIndex])
 
 
+  useEffect(() => {
+    if (!("webkitSpeechRecognition" in window)) return;
+  
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = true;
+    recognition.interimResults = false;
+  
+    recognition.onresult = (event) => {
+      const transcript =
+        event.results[event.results.length - 1][0].transcript;
+  
+      setAnswer((prev) => prev + " " + transcript);
+    };
+  
+    recognitionRef.current = recognition;
+  }, []);
+
+
+  const startMic = () => {
+    if (recognitionRef.current && !isAIPlaying) {
+      try {
+        recognitionRef.current.start();
+      } catch {}
+    }
+  };
+  
+  const stopMic = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+  };
+
+  const toggleMic = () =>{
+    if(isMicOn){
+      stopMic();
+    } else{
+      startMic();
+    }
+    setIsMicOn(!isMicOn);
+  }
+
 
   return (
     <div className='min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-100 flex items-center justify-center p-4 sm:p-6'>
@@ -259,6 +301,8 @@ function Step2Interview({ interviewData, onFinish }) {
 
           <textarea
             placeholder="Type your answer here..."
+            onChange={(e) => setAnswer(e.target.value)}
+            value={answer}
             className="flex-1 bg-gray-100 p-4 sm:p-6 rounded-2xl resize-none outline-none border border-gray-200 focus:ring-2 focus:ring-emerald-500 transition text-gray-800"
           />
 
