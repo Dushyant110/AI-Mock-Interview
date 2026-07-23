@@ -258,6 +258,28 @@ function Step2Interview({ interviewData, onFinish }) {
   };
 
 
+  const handleNext = async () => {
+    setAnswer("");
+    setFeedback("");
+
+    if (currentIndex + 1 >= questions.length) {
+      finishInterview();
+      return;
+    }
+
+    await speakText("Alright, let's move to the next question.");
+
+    setCurrentIndex(currentIndex + 1);
+
+    setTimeout(() => {
+      if (isMicOn) startMic();
+    }, 500);
+  };
+
+
+  
+
+
   return (
     <div className='min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-100 flex items-center justify-center p-4 sm:p-6'>
       <div className='w-full max-w-350 min-h-[80vh] bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col lg:flex-row overflow-hidden'>
@@ -353,7 +375,7 @@ function Step2Interview({ interviewData, onFinish }) {
               whileTap={{ scale: 0.9 }}
               className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-black text-white shadow-lg"
             >
-              {isMicOn?<FaMicrophone size={20} /> : <FaMicrophoneSlash size={20} />}
+              {isMicOn ? <FaMicrophone size={20} /> : <FaMicrophoneSlash size={20} />}
             </motion.button>
 
             <motion.button
@@ -375,6 +397,7 @@ function Step2Interview({ interviewData, onFinish }) {
               </p>
 
               <button
+                onClick={handleNext}
                 className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 text-white py-3 rounded-xl shadow-md hover:opacity-90 transition flex items-center justify-center gap-1"
               >
                 Next Question <BsArrowLeft size={18} />
