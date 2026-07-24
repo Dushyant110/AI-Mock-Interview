@@ -339,7 +339,7 @@ function Step3Report({ report }) {
                     <p className='text-sm text-gray-700 leading-relaxed'>
 
                       {q.feedback && q.feedback.trim() !== ""
-                        ? q.feedback
+                        ? q.feedback 
                         : "No feedback available for this question."}
                     </p>
                   </div>
