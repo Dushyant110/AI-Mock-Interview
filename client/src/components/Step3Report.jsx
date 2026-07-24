@@ -334,7 +334,7 @@ function Step3Report({ report }) {
 
                   <div className='bg-green-50 border border-green-200 p-4 rounded-lg'>
                     <p className='text-xs text-green-600 font-semibold mb-1'>
-                      AI Feedback
+                      AI Feedback 
                     </p>
                     <p className='text-sm text-gray-700 leading-relaxed'>
 
