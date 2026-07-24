@@ -208,7 +208,7 @@ function Pricing() {
                     }`}>
                   {loadingPlan === plan.id
                     ? "Processing..."
-                    : isSelected
+                    :  isSelected
                       ? "Proceed to Pay"
                       : "Select Plan"}
 
