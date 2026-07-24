@@ -10,7 +10,7 @@ const questionsSchema = new mongoose.Schema({
     confidence: { type: Number, default: 0 },
     communication: { type: Number, default: 0 },
     correctness: { type: Number, default: 0 },
-});
+})
 
 
 const interviewSchema = new mongoose.Schema({
@@ -41,13 +41,12 @@ const interviewSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["Incompleted", "Completed"],
+        enum: ["Incompleted", "completed"],
         default: "Incompleted",
     }
+}, { timestamps: true })
 
-}, { timestamps: true });
-
-const Interview = mongoose.model("Interview", interviewSchema);
+const Interview = mongoose.model("Interview", interviewSchema)
 
 
-export default Interview;
+export default Interview
