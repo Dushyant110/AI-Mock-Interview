@@ -17,19 +17,11 @@ app.use(cors({
 
 app.use(express.json())
 app.use(cookieParser())
-app.use((req, res, next) => {
-    console.log(req.method, req.originalUrl);
-    next();
-});
 
 app.use("/api/auth" , authRouter)
 app.use("/api/user", userRouter)
 app.use("/api/interview" , interviewRouter)
 app.use("/api/payment" , paymentRouter)
-
-app.post("/api/payment/order", (req, res) => {
-    res.json({ message: "Route is working" });
-});
 
 const PORT = process.env.PORT || 6000
 app.listen(PORT , ()=>{
